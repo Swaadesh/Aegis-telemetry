@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Brainrot Roaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A1128;
+    --surface: #14213D;
+    --paper: #F4EBD0;
+    --flame: #E8B84B;
+    --flame-hot: #F5CB5C;
+    --cash: #2F6FED;
+    --muted: #7C8AAD;
+    --line: #22304F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: 'Work Sans', sans-serif;
+    margin: 0;
+    padding: 0 0 80px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ───────── HERO / FIRE ───────── */
+
+  .hero {
+    position: relative;
+    height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 480px;
+    height: 480px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(245,203,92,0.55) 0%,
+      rgba(47,111,237,0.40) 30%,
+      rgba(47,111,237,0.15) 55%,
+      rgba(10,17,40,0) 75%);
+    filter: blur(6px);
+    animation: glowPulse 3s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
+  }
+
+  #emoji-fire {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .fire-emoji {
+    position: absolute;
+    bottom: -40px;
+    font-size: 24px;
+    animation-name: emojiRise;
+    animation-timing-function: ease-in;
+    animation-iteration-count: infinite;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px rgba(245,203,92,0.6));
+  }
+
+  @keyframes emojiRise {
+    0%   { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0.95; }
+    60%  { opacity: 0.8; }
+    100% { transform: translateY(-115vh) scale(1.1) rotate(14deg); opacity: 0; }
+  }
+
+  /* content sits above the fire layer */
+  .hero, .wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title-wrap {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--flame-hot);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(30px, 7vw, 44px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+    text-align: center;
+  }
+
+  h1 span { color: var(--cash); }
+
+  .subhead {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 auto 28px;
+    max-width: 42ch;
+    text-align: center;
+  }
+
+  /* ───────── PANELS ───────── */
+
+  .panel {
+    background: rgba(20, 33, 61, 0.88);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  /* ───────── CHATBOT ───────── */
+
+  .chat-window {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 12px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-window::-webkit-scrollbar { width: 5px; }
+  .chat-window::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+
+  .msg {
+    max-width: 82%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    animation: msgIn 0.25s ease;
+  }
+
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.bot {
+    background: #1B2947;
+    border: 1px solid var(--line);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg.user {
+    background: var(--flame);
+    color: #0A1128;
+    font-weight: 500;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.bot .amt { color: var(--cash); font-family: 'Space Mono', monospace; font-weight: 700; }
+
+  .typing {
+    display: flex;
+    gap: 4px;
+    padding: 12px 14px;
+    align-self: flex-start;
+  }
+
+  .typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+    animation: blink 1.2s infinite ease-in-out;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .chip {
+    background: transparent;
+    border: 1px solid var(--flame);
+    color: var(--flame-hot);
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .chip:hover { background: var(--flame); color: #0A1128; }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input-row input[type="text"] {
+    flex: 1;
+    background: #0A1128;
+    border: 1px solid var(--line);
+    color: var(--paper);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13.5px;
+    outline: none;
+  }
+
+  .chat-input-row input[type="text"]:focus { border-color: var(--flame); }
+
+  .send-btn {
+    background: var(--flame);
+    color: #0A1128;
+    border: none;
+    border-radius: 10px;
+    padding: 0 18px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .send-btn:hover { background: var(--flame-hot); }
+
+  .file-input-hidden { display: none; }
+
+  /* ───────── TXN DATA ───────── */
+
+  .line-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+  }
+
+  .line-item:last-child { border-bottom: none; }
+  .line-item .desc { color: var(--paper); }
+  .line-item .cat { color: var(--muted); font-size: 11px; display: block; margin-top: 2px; }
+  .line-item .amt { color: var(--cash); font-weight: 700; white-space: nowrap; }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 70px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .bar-label { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .bar-track { height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--flame), var(--cash)); border-radius: 6px; width: 0%; transition: width 0.6s ease; }
+  .bar-amt { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--paper); text-align: right; }
+
+  /* ───────── RECEIPT ───────── */
+
+  .receipt-wrap { display: none; margin-top: 8px; }
+  .receipt-wrap.show { display: block; animation: dropIn 0.5s ease; }
+
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .receipt {
+    background: var(--paper);
+    color: #14213D;
+    font-family: 'Space Mono', monospace;
+    padding: 28px 22px 20px;
+    position: relative;
+    clip-path: polygon(
+      0% 0%, 100% 0%, 100% 96%,
+      95% 100%, 90% 96%, 85% 100%, 80% 96%, 75% 100%, 70% 96%, 65% 100%,
+      60% 96%, 55% 100%, 50% 96%, 45% 100%, 40% 96%, 35% 100%, 30% 96%,
+      25% 100%, 20% 96%, 15% 100%, 10% 96%, 5% 100%, 0% 96%
+    );
+  }
+
+  .receipt-title { font-family: 'Archivo Black', monospace; font-size: 15px; text-align: center; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .receipt-sub { text-align: center; font-size: 10px; color: #5C6B8A; margin-bottom: 16px; letter-spacing: 0.05em; }
+  .receipt-divider { border: none; border-top: 1px dashed #5C6B8A; margin: 14px 0; }
+  .roast-line { font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+  .roast-line.intro { font-weight: 700; }
+  .roast-line.outro { font-weight: 700; color: var(--flame); margin-top: 4px; }
+
+  .stamp-wrap { text-align: center; margin-top: 16px; }
+  .stamp {
+    font-size: 10px; letter-spacing: 0.15em; color: var(--flame);
+    border: 2px solid var(--flame); display: inline-block; padding: 4px 10px;
+    transform: rotate(-3deg); border-radius: 4px;
+  }
+
+  .fixes-note {
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: center;
+    background: rgba(10, 17, 40, 0.7);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .fixes-note b { color: var(--cash); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div id="emoji-fire"></div>
+  <div class="hero-title-wrap">
+    <div class="eyebrow">Team 2 —  Gen-Z Finance Roaster</div>
+    <h1>Get roasted.<br><span>Accurately.</span></h1>
+    <p class="subhead">Same brainrot energy as the original idea — but your spending gets read correctly first, and the bot only roasts you if you ask.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="panel">
+    <div class="panel-label">💬 Chat with the Roast Bot</div>
+    <div class="chat-window" id="chat-window"></div>
+    <div class="quick-replies" id="quick-replies"></div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Type something… or just say 'roast me'" onkeydown="if(event.key==='Enter') handleUserText()">
+      <button class="send-btn" onclick="handleUserText()">Send</button>
+    </div>
+    <input type="file" id="csv-file" class="file-input-hidden" accept=".csv" onchange="handleFile(event)">
+  </div>
+
+  <div class="panel" id="txn-panel" style="display:none;">
+    <div class="panel-label">📊 Categorized transactions</div>
+    <div id="line-items"></div>
+    <div id="chart" style="margin-top:16px;"></div>
+  </div>
+
+  <div class="receipt-wrap" id="receipt-wrap">
+    <div class="receipt" id="receipt"></div>
+  </div>
+
+  <div class="fixes-note">
+    <b>What's fixed vs. the original concept:</b> transactions are categorized from real merchant data instead of guessed, the roast only fires when requested, and every line is grounded in the user's actual numbers.
+  </div>
+</div>
+
+<script>
+/* ═══════════ FIRE EMOJI ANIMATION ═══════════ */
+const FIRE_EMOJIS = ['🔥', '🔥', '🔥', '💀', '✨'];
+const emojiContainer = document.getElementById('emoji-fire');
+function spawnEmoji() {
+  const el = document.createElement('div');
+  el.className = 'fire-emoji';
+  el.textContent = FIRE_EMOJIS[Math.floor(Math.random() * FIRE_EMOJIS.length)];
+  const size = 18 + Math.random() * 16;
+  el.style.fontSize = size + 'px';
+  el.style.left = (50 + (Math.random() * 80 - 40)) + '%';
+  const duration = 2.2 + Math.random() * 1.6;
+  el.style.animationDuration = duration + 's';
+  emojiContainer.appendChild(el);
+  setTimeout(() => el.remove(), duration * 1000);
+}
+setInterval(spawnEmoji, 220);
+
+/* ═══════════ CATEGORIZATION + ROAST ENGINE ═══════════ */
+const CATEGORY_KEYWORDS = {
+  "Food Delivery": ["zomato","swiggy","uber eats","doordash","grubhub","deliveroo"],
+  "Subscriptions": ["netflix","spotify","prime video","hotstar","youtube premium","amazon prime","disney+","apple music","hbo"],
+  "Shopping": ["amazon","flipkart","myntra","ajio","shein","target","walmart"],
+  "Coffee & Snacks": ["starbucks","chai point","ccd","dunkin","third wave"],
+  "Rideshare/Travel": ["uber","ola","lyft","rapido","indigo","makemytrip"],
+  "Bills & Utilities": ["electricity","recharge","broadband","wifi","airtel","jio"],
+  "Groceries": ["bigbasket","blinkit","zepto","grocery","instamart"]
+};
+
+const ROAST_LINES = {
+  "Food Delivery": [
+    "₹{amt} on {merchant}. Bestie, your kitchen filed a missing persons report, this is unhinged.",
+    "₹{amt} on food delivery? At this point {merchant} should deliver straight to your bloodstream, no cap.",
+    "₹{amt} on {merchant} and you're calling THIS budgeting? It's giving delulu.",
+    "Bro really spent ₹{amt} on {merchant} and said 'I'm broke' in the same breath. Sus."
+  ],
+  "Subscriptions": [
+    "₹{amt} on subscriptions you forgot you had. {merchant} is basically your silent business partner now, lowkey scary.",
+    "₹{amt}/month on stuff you haven't opened since March living rent free in your bank statement fr."
+  ],
+  "Shopping": [
+    "₹{amt} on {merchant} 'essentials' still sitting unopened, judging you silently. That's an L.",
+    "Bro really said 'I'll just look' then dropped ₹{amt} on {merchant}. Sure Jan, cap detected.",
+    "₹{amt} on {merchant} and bro thinks he's the main character of a shopping spree. It's giving unhinged."
+  ],
+  "Coffee & Snacks": [
+    "₹{amt} at {merchant}. That's not caffeine dependency, that's a lifestyle choice with a receipt, ngl.",
+    "₹{amt} at {merchant} and you're still tired? Bro this ain't it."
+  ],
+  "Rideshare/Travel": [
+    "₹{amt} on {merchant} rides. Walking exists but okay, we respect the commitment to laziness, lowkey valid tho.",
+    "₹{amt} on rides, bro is chronically avoiding the gym and it shows in the bank statement."
+  ],
+  "Late Night Impulse": [
+    "₹{amt} spent between 11PM–4AM. Nothing good happens to your bank account after midnight and you KNOW this. Certified crash out.",
+    "₹{amt} at 2am? Bro was NOT locked in, this was a straight up tweaking moment."
+  ],
+  "Bills & Utilities": [
+    "₹{amt} on bills. Honestly this one's not funny, this is just adulting. Respect, that's a W.",
+    "₹{amt} on bills, most responsible thing on this whole receipt ngl, based."
+  ],
+  "Groceries": [
+    "₹{amt} on groceries via {merchant}. At least this one's a responsible flex, kinda based tbh.",
+    "₹{amt} on actual food you cook? That's a W, don't let it go to your head."
+  ],
+  "Other": [
+    "₹{amt} on {merchant} and honestly we're not sure what that was, but it happened. Highkey sus.",
+    "₹{amt} on {merchant}, bro's spending is giving mystery arc energy."
+  ]
+};
+
+const INTRO_LINES = [
+  "Okay bestie, sit down. We need to talk about your bank statement, no cap.",
+  "Deep breath. This is your spending, unfiltered and fully accurate this time, lowkey brutal.",
+  "You asked for the roast. There is no unsending this request. Let him cook. 🔥",
+  "Ngl your bank statement is about to get chronically online levels of exposed."
+];
+
+const OUTRO_LINES = [
+  "That's the tea, all backed by your actual transaction data. No cap.",
+  "Fr fr, all real numbers, no guessing. Fix your life or don't, we don't judge (we do).",
+  "Unlike that OTHER finance bot, this roast is 100% accurate. You're welcome, that's a W for us.",
+  "This whole receipt is giving mid, but hey, at least it's an honest mid."
+];
+
+const VERDICT_LINES = [
+  { max: 3000, text: "Overall verdict: certified budget king/queen behavior. That's a W. 👑" },
+  { max: 8000, text: "Overall verdict: mid month, nothing crazy, nothing responsible either. Just... mid." },
+  { max: 15000, text: "Overall verdict: bro is cooking, but not in a good way. Lowkey an L month. 💀" },
+  { max: Infinity, text: "Overall verdict: this is a full crash out. Chronically online AND chronically broke. Touch grass, check your bank app. 🚩" }
+];
+
+function getVerdict(total) {
+  for (const v of VERDICT_LINES) {
+    if (total <= v.max) return v.text;
+  }
+  return VERDICT_LINES[VERDICT_LINES.length - 1].text;
+}
+
+let currentData = [];
+
+function categorize(desc, time) {
+  const d = desc.toLowerCase();
+  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (keywords.some(kw => d.includes(kw))) return cat;
+  }
+  if (isLateNight(time)) return "Late Night Impulse";
+  return "Other";
+}
+
+function isLateNight(time) {
+  if (!time) return false;
+  const hour = parseInt(time.split(":")[0], 10);
+  if (isNaN(hour)) return false;
+  return hour >= 23 || hour <= 4;
+}
+
+function getSampleData() {
+  const sample = [
+    ["Zomato", 850, "23:45"], ["Netflix", 649, "14:00"], ["Amazon", 2300, "12:30"],
+    ["Starbucks", 380, "09:15"], ["Uber", 540, "22:10"], ["Swiggy Instamart", 1200, "00:30"],
+    ["Spotify", 119, "10:00"], ["Flipkart", 1899, "20:45"], ["BigBasket", 2100, "17:20"],
+    ["Airtel Recharge", 599, "11:00"], ["Zomato", 620, "01:15"], ["Myntra", 3200, "19:00"]
+  ];
+  return sample.map(([desc, amt, time]) => ({ description: desc, amount: amt, time, category: categorize(desc, time) }));
+}
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+/* ═══════════ CHAT ENGINE ═══════════ */
+const chatWindow = document.getElementById('chat-window');
+const quickReplies = document.getElementById('quick-replies');
+
+function addMessage(text, sender) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + sender;
+  div.innerHTML = text;
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  return div;
+}
+
+function botSay(text, delay = 600) {
+  return new Promise(resolve => {
+    const typingEl = showTyping();
+    setTimeout(() => {
+      typingEl.remove();
+      addMessage(text, 'bot');
+      resolve();
+    }, delay);
+  });
+}
+
+function setQuickReplies(options) {
+  quickReplies.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = opt.label;
+    btn.onclick = () => { addMessage(opt.label, 'user'); opt.action(); };
+    quickReplies.appendChild(btn);
+  });
+}
+
+async function startChat() {
+  await botSay("hey bestie 👋 I'm your Roast Bot. I'll only roast your spending if you actually ask me to, no random insults, that's cap-free promise.");
+  await botSay("want to start with some sample data, or upload your own transactions? let's get you locked in.");
+  setQuickReplies([
+    { label: "Use sample data", action: loadSample },
+    { label: "Upload my CSV", action: () => document.getElementById('csv-file').click() },
+  ]);
+}
+
+async function loadSample() {
+  currentData = getSampleData();
+  await botSay("bet, loading your sample spending now… let him cook.");
+  renderTxnData();
+  await botSay("okay I've read through it, categorized everything below 👇 accurately this time, unlike that other bot fr.");
+  setQuickReplies([
+    { label: "Roast me 💀", action: doRoast },
+    { label: "Show me the breakdown again", action: () => document.getElementById('txn-panel').scrollIntoView({behavior:'smooth'}) },
+  ]);
+}
+
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  addMessage("uploaded: " + file.name, 'user');
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const descIdx = headers.indexOf('description');
+    const amtIdx = headers.indexOf('amount');
+    const timeIdx = headers.indexOf('time');
+    currentData = lines.slice(1).map(line => {
+      const cols = line.split(',');
+      const desc = cols[descIdx] ? cols[descIdx].trim() : 'Unknown';
+      const amt = parseFloat(cols[amtIdx]) || 0;
+      const time = timeIdx >= 0 && cols[timeIdx] ? cols[timeIdx].trim() : '';
+      return { description: desc, amount: amt, time, category: categorize(desc, time) };
+    });
+    await botSay("got it, reading your file… ngl this might get brutal.");
+    renderTxnData();
+    await botSay("categorized and accurate. ready when you are bestie.");
+    setQuickReplies([{ label: "Roast me 💀", action: doRoast }]);
+  };
+  reader.readAsText(file);
+}
+
+async function doRoast() {
+  if (!currentData.length) {
+    await botSay("I don't have any spending data yet, that's mad sus. load sample data or upload a CSV first!");
+    setQuickReplies([{ label: "Use sample data", action: loadSample }]);
+    return;
+  }
+  await botSay("say less, let me cook this up 🧾🔥 give me a sec...");
+  await renderReceipt();
+  document.getElementById('receipt-wrap').scrollIntoView({ behavior: 'smooth' });
+  setQuickReplies([{ label: "Roast me again", action: doRoast }, { label: "Start over", action: () => location.reload() }]);
+}
+
+function handleUserText() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  input.value = '';
+  const lower = text.toLowerCase();
+  if (lower.includes('roast')) {
+    doRoast();
+  } else if (lower.includes('sample')) {
+    loadSample();
+  } else if (lower.includes('upload') || lower.includes('csv')) {
+    document.getElementById('csv-file').click();
+  } else {
+    botSay("bro is yapping 💀 I'm best at three things: loading sample data, reading your CSV, and roasting you. Try one of the buttons below 👇");
+    setQuickReplies([
+      { label: "Use sample data", action: loadSample },
+      { label: "Roast me 💀", action: doRoast },
+    ]);
+  }
+}
+
+/* ═══════════ RENDER: TXN DATA + RECEIPT ═══════════ */
+function renderTxnData() {
+  const panel = document.getElementById('txn-panel');
+  const lineItemsDiv = document.getElementById('line-items');
+  const chartDiv = document.getElementById('chart');
+
+  lineItemsDiv.innerHTML = currentData.map(row => `
+    <div class="line-item">
+      <div><span class="desc">${row.description}</span><span class="cat">${row.category}</span></div>
+      <div class="amt">₹${row.amount.toLocaleString()}</div>
+    </div>
+  `).join('');
+
+  const totals = {};
+  currentData.forEach(row => { totals[row.category] = (totals[row.category] || 0) + row.amount; });
+  const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+  const maxAmt = sorted.length ? sorted[0][1] : 1;
+
+  chartDiv.innerHTML = sorted.map(([cat, amt]) => `
+    <div class="bar-row">
+      <div class="bar-label">${cat}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(amt/maxAmt*100).toFixed(0)}%"></div></div>
+      <div class="bar-amt">₹${amt.toLocaleString()}</div>
+    </div>
+  `).join('');
+
+  panel.style.display = 'block';
+}
+
+const BACKEND_URL = "http://localhost:5000";
+
+function getLocalRoastLines() {
+  const totals = {};
+  const topMerchant = {};
+  currentData.forEach(row => {
+    totals[row.category] = (totals[row.category] || 0) + row.amount;
+    if (!topMerchant[row.category]) topMerchant[row.category] = row.description;
+  });
+  const sorted = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+  const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
+
+  const lines = [{ text: pick(INTRO_LINES), cls: 'intro' }];
+  sorted.forEach(([cat, amt]) => {
+    const templates = ROAST_LINES[cat] || ROAST_LINES["Other"];
+    const line = pick(templates).replace('{amt}', amt.toLocaleString()).replace('{merchant}', topMerchant[cat]);
+    lines.push({ text: line, cls: '' });
+  });
+  lines.push({ text: getVerdict(grandTotal), cls: 'outro' });
+  lines.push({ text: pick(OUTRO_LINES), cls: '' });
+  return { lines, source: 'VERIFIED DATA (rule-based)' };
+}
+
+async function getAiRoastLines() {
+  const payload = {
+    transactions: currentData.map(r => ({
+      description: r.description,
+      amount: r.amount,
+      category: r.category,
+    })),
+  };
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  const response = await fetch(`${BACKEND_URL}/roast`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    signal: controller.signal,
+  });
+  clearTimeout(timeoutId);
+
+  if (!response.ok) {
+    const errBody = await response.json().catch(() => ({}));
+    throw new Error(errBody.error || `Backend returned ${response.status}`);
+  }
+
+  const data = await response.json();
+  const rawLines = data.roast.split("\n").map(l => l.trim()).filter(Boolean);
+  const lines = rawLines.map((text, i) => ({
+    text,
+    cls: i === 0 ? 'intro' : (i === rawLines.length - 1 ? 'outro' : ''),
+  }));
+  return { lines, source: 'AI GENERATED (grok-4)' };
+}
+
+async function generateRoastLines() {
+  try {
+    return await getAiRoastLines();
+  } catch (e) {
+    console.warn("AI roast unavailable, falling back to local roast engine:", e.message);
+    return getLocalRoastLines();
+  }
+}
+
+async function renderReceipt() {
+  const { lines, source } = await generateRoastLines();
+
+  const receipt = document.getElementById('receipt');
+  receipt.innerHTML = `
+    <div class="receipt-title">*** BRAINROT RECEIPT ***</div>
+    <div class="receipt-sub">${source}</div>
+    <hr class="receipt-divider">
+    ${lines.map(l => `<div class="roast-line ${l.cls}">${l.text}</div>`).join('')}
+    <hr class="receipt-divider">
+    <div class="stamp-wrap"><div class="stamp">VERIFIED DATA</div></div>
+  `;
+  document.getElementById('receipt-wrap').classList.add('show');
+}
+
+startChat();
+</script>
+
+</body>
+</html>
